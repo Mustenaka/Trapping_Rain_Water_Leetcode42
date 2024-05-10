@@ -9,6 +9,7 @@ public:
     int trap(vector<int> &height)
     {
         int result = 0;
+        int max_left_heigh = 0;
 
         // Return to special input processing in advance
         if (height.size() <= 1)
@@ -16,27 +17,25 @@ public:
             return 0;
         }
 
-        // dp array, left heigh and right heigh
-        vector<int> left_heigh(height.begin(), height.end());
+        // 2ptr-dp array, left heigh and right heigh
         vector<int> right_heigh(height.begin(), height.end());
 
-        // calc left dp array
-        for (int i = 1; i < left_heigh.size() - 1; i++)
+        // dp calc right_heigh array
+        for (int i = height.size() - 2; i >= 0; i--)
         {
-            left_heigh[i] = std::max(left_heigh[i - 1], height[i]);
-        }
-
-        // calc right dp array
-        for (int i = right_heigh.size() - 2; i >= 0; i--)
-        {
-            right_heigh[i] = std::max(right_heigh[i + 1], height[i]);
+            right_heigh[i] = std::max(right_heigh[i + 1], height[i + 1]);
         }
 
         // calc the result
-        for (int i = 0; i < height.size(); i++)
+        for (int i = 1; i < height.size() - 1; i++)
         {
-            int min_board = std::min(right_heigh[i], left_heigh[i]);
-            result += (min_board - height[i]);
+            max_left_heigh = std::max(max_left_heigh, height[i - 1]);
+            int min = std::min(max_left_heigh, right_heigh[i]);
+
+            if (min > height[i])
+            {
+                result += (min - height[i]);
+            }
         }
 
         return result;
